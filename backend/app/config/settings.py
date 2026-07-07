@@ -46,6 +46,11 @@ class Settings(BaseSettings):
         validation_alias="LOG_LEVEL",
         description="Logging level"
     )
+    sync_repo_path: str = Field(
+        default="leetcode_portfolio",
+        validation_alias="SYNC_REPO_PATH",
+        description="Local folder where LeetCode portfolio git repository is stored/cloned"
+    )
 
     # Configuration to load from .env file
     model_config = SettingsConfigDict(
