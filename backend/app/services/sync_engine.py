@@ -8,6 +8,7 @@ from app.config.settings import settings
 from app.models.models import SyncedSubmission, SyncJob, SyncLog
 from app.integrations.github import GitHubIntegration
 from app.integrations.leetcode import LeetCodeIntegration
+from app.services.doc_generator import DocumentationGeneratorService
 
 logger = logging.getLogger(__name__)
 
@@ -36,9 +37,10 @@ LANGUAGE_EXTENSIONS = {
 }
 
 class SyncEngineService:
-    def __init__(self, github_client: Optional[GitHubIntegration] = None, leetcode_client: Optional[LeetCodeIntegration] = None):
+    def __init__(self, github_client: Optional[GitHubIntegration] = None, leetcode_client: Optional[LeetCodeIntegration] = None, doc_generator: Optional[DocumentationGeneratorService] = None):
         self.github_client = github_client or GitHubIntegration()
         self.leetcode_client = leetcode_client or LeetCodeIntegration()
+        self.doc_generator = doc_generator or DocumentationGeneratorService()
 
     def get_extension(self, lang_name: str) -> str:
         """Translates a programming language name to its file extension."""
@@ -149,15 +151,16 @@ class SyncEngineService:
                 lang_display = details["lang"]["verboseName"]
                 commit_msg = f"Solved #{q_id} {q_title} ({lang_display})"
                 
-                # Generate individual README.md content (Stubbed until Step 8 Documentation Generator)
-                topics_str = ", ".join([t["name"] for t in topic_tags])
-                readme_content = f"# {q_title}\n\n"
-                readme_content += f"## Details\n"
-                readme_content += f"- **Question ID**: {q_id}\n"
-                readme_content += f"- **Difficulty**: {difficulty}\n"
-                readme_content += f"- **Language**: {lang_display}\n"
-                readme_content += f"- **Topics**: {topics_str}\n\n"
-                readme_content += f"## Problem Description\n\n*Description details can be found on [LeetCode](https://leetcode.com/problems/{q_slug}/).*\n"
+                # Generate individual README.md content using Doc Generator Service
+                readme_content = self.doc_generator.generate_problem_readme(
+                    question_id=q_id,
+                    title=q_title,
+                    slug=q_slug,
+                    difficulty=difficulty,
+                    topic_tags=topic_tags,
+                    lang_name=details["lang"]["name"],
+                    code_content=code_content
+                )
                 
                 # Commit solution & README files to Git
                 # In order to commit multiple files, we first write README then write the solution (committing and pushing them)
