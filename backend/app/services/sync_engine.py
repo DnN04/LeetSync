@@ -1,5 +1,6 @@
 import logging
 import time
+import json
 from datetime import datetime
 from typing import Optional, Dict, Any, List
 from sqlalchemy.orm import Session
@@ -9,6 +10,7 @@ from app.models.models import SyncedSubmission, SyncJob, SyncLog
 from app.integrations.github import GitHubIntegration
 from app.integrations.leetcode import LeetCodeIntegration
 from app.services.doc_generator import DocumentationGeneratorService
+from app.services.stats_engine import StatisticsEngineService
 
 logger = logging.getLogger(__name__)
 
@@ -37,10 +39,11 @@ LANGUAGE_EXTENSIONS = {
 }
 
 class SyncEngineService:
-    def __init__(self, github_client: Optional[GitHubIntegration] = None, leetcode_client: Optional[LeetCodeIntegration] = None, doc_generator: Optional[DocumentationGeneratorService] = None):
+    def __init__(self, github_client: Optional[GitHubIntegration] = None, leetcode_client: Optional[LeetCodeIntegration] = None, doc_generator: Optional[DocumentationGeneratorService] = None, stats_engine: Optional[StatisticsEngineService] = None):
         self.github_client = github_client or GitHubIntegration()
         self.leetcode_client = leetcode_client or LeetCodeIntegration()
         self.doc_generator = doc_generator or DocumentationGeneratorService()
+        self.stats_engine = stats_engine or StatisticsEngineService()
 
     def get_extension(self, lang_name: str) -> str:
         """Translates a programming language name to its file extension."""
@@ -184,8 +187,15 @@ class SyncEngineService:
                 )
                 db.add(synced_record)
                 db.commit()
-                logger.info(f"Submission {sub_id} successfully synchronized and saved.")
                 
+            # 6. Rebuild Statistics and commit/push statistics.json and master README.md
+            logger.info("Rebuilding repository statistics files...")
+            stats_dict, master_readme_content = self.stats_engine.generate_statistics(db)
+            
+            # Commit stats json and root readme
+            self.github_client.commit_and_push("statistics.json", json.dumps(stats_dict, indent=2), "stats: Update portfolio statistics")
+            self.github_client.commit_and_push("README.md", master_readme_content, "docs: Update master solved summary README")
+            
             self._complete_job(db, job, start_time)
             
         except Exception as e:
