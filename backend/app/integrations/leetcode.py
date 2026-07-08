@@ -19,6 +19,33 @@ class LeetCodeIntegration:
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         }
         
+        if self.session_cookie and not self.csrf_token:
+            self._auto_fetch_csrf()
+            
+        self._build_cookies()
+
+    def _auto_fetch_csrf(self):
+        try:
+            logger.info("LeetCode CSRF Token not configured. Attempting to fetch automatically from LeetCode home page...")
+            with httpx.Client() as client:
+                resp = client.get(
+                    "https://leetcode.com/",
+                    headers={
+                        "Cookie": f"LEETCODE_SESSION={self.session_cookie}",
+                        "User-Agent": self.headers["User-Agent"]
+                    },
+                    timeout=10.0
+                )
+                csrf = resp.cookies.get("csrftoken")
+                if csrf:
+                    self.csrf_token = csrf
+                    logger.info("Successfully fetched CSRF token from cookies.")
+                else:
+                    logger.warning("CSRF token cookie ('csrftoken') was not found in response cookies.")
+        except Exception as e:
+            logger.error(f"Failed to automatically retrieve LeetCode CSRF token: {e}")
+
+    def _build_cookies(self):
         cookies = []
         if self.session_cookie:
             cookies.append(f"LEETCODE_SESSION={self.session_cookie}")
