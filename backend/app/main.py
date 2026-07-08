@@ -6,12 +6,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.infrastructure.database import init_db
 from app.services.scheduler_service import scheduler_service
 from app.dashboard.routes import router as dashboard_router
+from app.utilities.logger import setup_logging
+from app.config.settings import settings
 
-# Setup basic logging config
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
-)
+# Setup JSON logging formatting on startup
+setup_logging(settings.log_level)
 logger = logging.getLogger(__name__)
 
 @asynccontextmanager
