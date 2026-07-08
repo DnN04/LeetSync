@@ -112,6 +112,10 @@ export default function App() {
   }, []);
 
   const triggerSync = async () => {
+    setStatus(prev => prev ? {
+      ...prev,
+      last_sync_job: prev.last_sync_job ? { ...prev.last_sync_job, status: 'RUNNING' } : undefined
+    } : null);
     setSyncing(true);
     setMessage(null);
     try {
@@ -157,23 +161,29 @@ export default function App() {
 
   const getDifficultyColor = (diff: string) => {
     const d = diff.toLowerCase();
-    if (d === 'easy') return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30 shadow-sm shadow-emerald-500/5';
-    if (d === 'medium') return 'text-amber-400 bg-amber-500/10 border-amber-500/30 shadow-sm shadow-amber-500/5';
-    return 'text-rose-400 bg-rose-500/10 border-rose-500/30 shadow-sm shadow-rose-500/5';
+    if (d === 'easy') return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30';
+    if (d === 'medium') return 'text-amber-400 bg-amber-500/10 border-amber-500/30';
+    return 'text-rose-400 bg-rose-500/10 border-rose-500/30';
   };
 
   return (
-    <div className="min-h-screen bg-[#060608] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-950/20 via-black to-[#060608] text-[#F5F5F7] flex flex-col font-sans antialiased">
+    <div className="min-h-screen bg-[#07060F] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-950/45 via-[#07060F] to-[#040409] text-[#F5F5F7] flex flex-col font-sans antialiased relative overflow-hidden">
+      
+      {/* Glow Effects */}
+      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute bottom-[20%] right-[-10%] w-[60%] h-[60%] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none"></div>
+      <div className="absolute top-[30%] right-[10%] w-[40%] h-[40%] bg-emerald-600/5  rounded-full blur-[100px] pointer-events-none"></div>
+
       {/* Premium Glass Header */}
-      <header className="border-b border-white/[0.06] bg-[#060608]/65 backdrop-blur-xl sticky top-0 z-50 transition-all duration-300">
+      <header className="border-b border-white/[0.08] bg-[#07060F]/65 backdrop-blur-2xl sticky top-0 z-50 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0071E3] to-[#862bfd] flex items-center justify-center shadow-lg shadow-blue-500/25">
-              <Activity className="w-5 h-5 text-white" />
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#0071E3] via-purple-600 to-[#FF453A] flex items-center justify-center shadow-lg shadow-blue-500/25">
+              <Activity className="w-5.5 h-5.5 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold tracking-tight bg-gradient-to-r from-white via-[#F5F5F7] to-gray-400 bg-clip-text text-transparent">LeetSync Pro</h1>
-              <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Accepted submission automation engine</p>
+              <h1 className="text-xl font-black tracking-tight bg-gradient-to-r from-white via-[#F5F5F7] to-gray-300 bg-clip-text text-transparent">LeetSync <span className="text-[#0071E3]">Pro</span></h1>
+              <p className="text-[10px] text-blue-400 font-bold uppercase tracking-widest">Automation Portfolio System</p>
             </div>
           </div>
 
@@ -181,7 +191,7 @@ export default function App() {
             <button
               onClick={triggerSync}
               disabled={syncing}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#0071E3] to-[#0077ED] text-white rounded-xl text-sm font-semibold hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 shadow-md shadow-blue-500/20"
+              className="flex items-center gap-2.5 px-5 py-2.5 bg-gradient-to-r from-[#0071E3] to-purple-600 text-white rounded-2xl text-sm font-bold hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 shadow-md shadow-blue-500/20"
             >
               <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
               Sync Now
@@ -191,60 +201,62 @@ export default function App() {
       </header>
 
       {/* Main Content Layout */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8 flex flex-col md:flex-row gap-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8 flex flex-col md:flex-row gap-8 relative z-10">
         
         {/* Navigation Sidebar */}
-        <aside className="w-full md:w-64 flex flex-col gap-1.5 shrink-0">
+        <aside className="w-full md:w-64 flex flex-col gap-2 shrink-0">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 border ${activeTab === 'overview' ? 'bg-white/[0.04] text-white border-white/[0.08] shadow-inner shadow-white/5' : 'text-gray-400 border-transparent hover:text-white hover:bg-white/[0.02]'}`}
+            className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-200 border ${activeTab === 'overview' ? 'bg-[#0071E3]/15 text-white border-[#0071E3]/30 shadow-lg shadow-blue-500/5' : 'text-gray-400 border-transparent hover:text-white hover:bg-white/[0.03]'}`}
           >
             <Activity className={`w-4 h-4 ${activeTab === 'overview' ? 'text-[#0071E3]' : ''}`} />
             Overview
           </button>
           <button
             onClick={() => setActiveTab('submissions')}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 border ${activeTab === 'submissions' ? 'bg-white/[0.04] text-white border-white/[0.08] shadow-inner shadow-white/5' : 'text-gray-400 border-transparent hover:text-white hover:bg-white/[0.02]'}`}
+            className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-200 border ${activeTab === 'submissions' ? 'bg-purple-600/15 text-white border-purple-500/30 shadow-lg shadow-purple-500/5' : 'text-gray-400 border-transparent hover:text-white hover:bg-white/[0.03]'}`}
           >
             <FolderCheck className={`w-4 h-4 ${activeTab === 'submissions' ? 'text-purple-400' : ''}`} />
             Synced Solutions
           </button>
           <button
             onClick={() => setActiveTab('logs')}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 border ${activeTab === 'logs' ? 'bg-white/[0.04] text-white border-white/[0.08] shadow-inner shadow-white/5' : 'text-gray-400 border-transparent hover:text-white hover:bg-white/[0.02]'}`}
+            className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-200 border ${activeTab === 'logs' ? 'bg-amber-500/15 text-white border-amber-500/30 shadow-lg shadow-amber-500/5' : 'text-gray-400 border-transparent hover:text-white hover:bg-white/[0.03]'}`}
           >
             <Terminal className={`w-4 h-4 ${activeTab === 'logs' ? 'text-amber-400' : ''}`} />
             Sync Logs
           </button>
           <button
             onClick={() => setActiveTab('settings')}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 border ${activeTab === 'settings' ? 'bg-white/[0.04] text-white border-white/[0.08] shadow-inner shadow-white/5' : 'text-gray-400 border-transparent hover:text-white hover:bg-white/[0.02]'}`}
+            className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-200 border ${activeTab === 'settings' ? 'bg-sky-500/15 text-white border-sky-500/30 shadow-lg shadow-sky-500/5' : 'text-gray-400 border-transparent hover:text-white hover:bg-white/[0.03]'}`}
           >
             <SettingsIcon className={`w-4 h-4 ${activeTab === 'settings' ? 'text-sky-400' : ''}`} />
             Settings
           </button>
 
           {/* Quick Connection Status Info */}
-          <div className="mt-8 p-5 bg-white/[0.02] rounded-2xl border border-white/[0.06] flex flex-col gap-4">
-            <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-1.5"><UserCheck className="w-3.5 h-3.5" /> Connections</h3>
-            <div className="flex items-center justify-between text-xs border-b border-white/[0.04] pb-2.5">
-              <span className="flex items-center gap-2 text-gray-400">
-                <svg className="w-4 h-4 text-white/80" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg> GitHub
+          <div className="mt-8 p-5 bg-[#0c091f]/40 rounded-3xl border border-white/[0.08] flex flex-col gap-4 shadow-xl">
+            <h3 className="text-[10px] font-bold text-blue-400 uppercase tracking-widest flex items-center gap-1.5"><UserCheck className="w-3.5 h-3.5" /> Connections</h3>
+            
+            <div className="flex items-center justify-between text-xs border-b border-white/[0.04] pb-3">
+              <span className="flex items-center gap-2 text-gray-300 font-semibold">
+                <svg className="w-4 h-4 text-purple-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg> GitHub
               </span>
               {status?.github_connected ? (
-                <span className="flex items-center gap-1 text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full text-[10px]">Active</span>
+                <span className="text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded-full text-[10px] border border-emerald-500/20">Connected</span>
               ) : (
-                <span className="flex items-center gap-1 text-rose-400 font-bold bg-rose-500/10 px-2 py-0.5 rounded-full text-[10px]">Offline</span>
+                <span className="text-rose-400 font-bold bg-rose-500/10 px-2.5 py-0.5 rounded-full text-[10px] border border-rose-500/20">Offline</span>
               )}
             </div>
+            
             <div className="flex items-center justify-between text-xs">
-              <span className="flex items-center gap-2 text-gray-400">
+              <span className="flex items-center gap-2 text-gray-300 font-semibold">
                 💡 LeetCode
               </span>
               {status?.leetcode_connected ? (
-                <span className="flex items-center gap-1 text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full text-[10px]">Active</span>
+                <span className="text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded-full text-[10px] border border-emerald-500/20">Connected</span>
               ) : (
-                <span className="flex items-center gap-1 text-rose-400 font-bold bg-rose-500/10 px-2 py-0.5 rounded-full text-[10px]">Expired</span>
+                <span className="text-rose-400 font-bold bg-rose-500/10 px-2.5 py-0.5 rounded-full text-[10px] border border-rose-500/20">Offline</span>
               )}
             </div>
           </div>
@@ -254,8 +266,8 @@ export default function App() {
         <section className="flex-1 min-w-0">
           
           {message && (
-            <div className="mb-6 p-4 bg-gradient-to-r from-blue-950/30 to-indigo-950/30 border border-blue-500/20 rounded-2xl flex items-center justify-between text-sm text-blue-300">
-              <span className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-blue-400" /> {message}</span>
+            <div className="mb-6 p-4 bg-gradient-to-r from-blue-950/40 to-purple-950/40 border border-blue-500/20 rounded-2xl flex items-center justify-between text-sm text-blue-300 shadow-lg shadow-blue-500/5">
+              <span className="flex items-center gap-2"><CheckCircle className="w-4.5 h-4.5 text-[#0071E3]" /> {message}</span>
               <button onClick={() => setMessage(null)} className="hover:text-white text-xs">✕</button>
             </div>
           )}
@@ -265,36 +277,32 @@ export default function App() {
               
               {/* Metrics Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                <div className="bg-white/[0.02] border border-white/[0.06] p-6 rounded-3xl flex flex-col gap-2 shadow-lg shadow-black/20 relative overflow-hidden group hover:border-white/10 transition-all duration-300">
-                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-500 to-indigo-600"></div>
-                  <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">Total Synced</span>
+                <div className="bg-gradient-to-b from-white/[0.06] to-white/[0.01] border border-white/[0.08] p-6 rounded-3xl flex flex-col gap-2 shadow-xl hover:border-blue-500/20 transition-all duration-300">
+                  <span className="text-blue-400 text-xs font-bold uppercase tracking-wider">Total Synced</span>
                   <div className="flex items-baseline justify-between mt-1">
-                    <span className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">{stats?.total_solved || 0}</span>
-                    <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">Verified</span>
+                    <span className="text-3xl font-black bg-gradient-to-r from-white via-white to-blue-200 bg-clip-text text-transparent">{stats?.total_solved || 0}</span>
+                    <span className="text-[10px] text-blue-400 font-extrabold bg-blue-500/10 px-2 py-0.5 rounded-full border border-blue-500/20">Synced</span>
                   </div>
                 </div>
 
-                <div className="bg-white/[0.02] border border-white/[0.06] p-6 rounded-3xl flex flex-col gap-2 shadow-lg shadow-black/20 relative overflow-hidden hover:border-emerald-500/20 transition-all duration-300">
-                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-emerald-500"></div>
-                  <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">Easy Solved</span>
+                <div className="bg-gradient-to-b from-white/[0.06] to-white/[0.01] border border-white/[0.08] p-6 rounded-3xl flex flex-col gap-2 shadow-xl hover:border-emerald-500/20 transition-all duration-300">
+                  <span className="text-emerald-400 text-xs font-bold uppercase tracking-wider">Easy Solved</span>
                   <div className="flex items-baseline justify-between mt-1">
-                    <span className="text-3xl font-extrabold tracking-tight text-emerald-400">{stats?.difficulty_breakdown.Easy || 0}</span>
+                    <span className="text-3xl font-black bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">{stats?.difficulty_breakdown.Easy || 0}</span>
                   </div>
                 </div>
 
-                <div className="bg-white/[0.02] border border-white/[0.06] p-6 rounded-3xl flex flex-col gap-2 shadow-lg shadow-black/20 relative overflow-hidden hover:border-amber-500/20 transition-all duration-300">
-                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-amber-500"></div>
-                  <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">Medium Solved</span>
+                <div className="bg-gradient-to-b from-white/[0.06] to-white/[0.01] border border-white/[0.08] p-6 rounded-3xl flex flex-col gap-2 shadow-xl hover:border-amber-500/20 transition-all duration-300">
+                  <span className="text-amber-400 text-xs font-bold uppercase tracking-wider">Medium Solved</span>
                   <div className="flex items-baseline justify-between mt-1">
-                    <span className="text-3xl font-extrabold tracking-tight text-amber-400">{stats?.difficulty_breakdown.Medium || 0}</span>
+                    <span className="text-3xl font-black bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">{stats?.difficulty_breakdown.Medium || 0}</span>
                   </div>
                 </div>
 
-                <div className="bg-white/[0.02] border border-white/[0.06] p-6 rounded-3xl flex flex-col gap-2 shadow-lg shadow-black/20 relative overflow-hidden hover:border-rose-500/20 transition-all duration-300">
-                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-rose-500"></div>
-                  <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">Hard Solved</span>
+                <div className="bg-gradient-to-b from-white/[0.06] to-white/[0.01] border border-white/[0.08] p-6 rounded-3xl flex flex-col gap-2 shadow-xl hover:border-rose-500/20 transition-all duration-300">
+                  <span className="text-rose-400 text-xs font-bold uppercase tracking-wider">Hard Solved</span>
                   <div className="flex items-baseline justify-between mt-1">
-                    <span className="text-3xl font-extrabold tracking-tight text-rose-400">{stats?.difficulty_breakdown.Hard || 0}</span>
+                    <span className="text-3xl font-black bg-gradient-to-r from-rose-400 to-red-400 bg-clip-text text-transparent">{stats?.difficulty_breakdown.Hard || 0}</span>
                   </div>
                 </div>
               </div>
@@ -303,25 +311,25 @@ export default function App() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 
                 {/* Scheduler Status */}
-                <div className="bg-white/[0.02] border border-white/[0.06] p-6 rounded-3xl flex flex-col gap-4 shadow-lg shadow-black/15">
+                <div className="bg-white/[0.02] border border-white/[0.06] p-6 rounded-3xl flex flex-col gap-4 shadow-xl">
                   <div className="flex items-center justify-between border-b border-white/[0.04] pb-4">
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-blue-400" />
-                      <h3 className="font-bold text-sm">Scheduler Automation</h3>
+                    <div className="flex items-center gap-2.5">
+                      <Clock className="w-5 h-5 text-blue-400" />
+                      <h3 className="font-bold text-sm text-[#F5F5F7]">Scheduler Automation</h3>
                     </div>
-                    <span className={`text-[10px] px-2.5 py-1 rounded-full font-extrabold ${status?.scheduler.status === 'RUNNING' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>
+                    <span className={`text-[10px] px-2.5 py-1 rounded-full font-bold border ${status?.scheduler.status === 'RUNNING' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-lg shadow-emerald-500/5' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'}`}>
                       {status?.scheduler.status}
                     </span>
                   </div>
 
-                  <div className="flex flex-col gap-3 text-sm text-gray-400">
+                  <div className="flex flex-col gap-3.5 text-sm text-gray-400">
                     <div className="flex justify-between border-b border-white/[0.02] pb-2">
                       <span>Sync Interval</span>
-                      <span className="text-white font-semibold">{status?.scheduler.sync_interval_minutes} mins</span>
+                      <span className="text-white font-bold">{status?.scheduler.sync_interval_minutes} mins</span>
                     </div>
                     <div className="flex justify-between border-b border-white/[0.02] pb-2">
                       <span>Target Repository</span>
-                      <span className="text-blue-400 hover:underline font-semibold font-mono text-xs max-w-[200px] truncate">
+                      <span className="text-blue-400 hover:underline font-bold font-mono text-xs max-w-[200px] truncate">
                         <a href={`https://github.com/${status?.github_repo}`} target="_blank" rel="noreferrer">
                           {status?.github_repo || 'Not Configured'}
                         </a>
@@ -335,14 +343,14 @@ export default function App() {
                 </div>
 
                 {/* Latest Execution Details */}
-                <div className="bg-white/[0.02] border border-white/[0.06] p-6 rounded-3xl flex flex-col gap-4 shadow-lg shadow-black/15">
+                <div className="bg-white/[0.02] border border-white/[0.06] p-6 rounded-3xl flex flex-col gap-4 shadow-xl">
                   <div className="flex items-center justify-between border-b border-white/[0.04] pb-4">
-                    <div className="flex items-center gap-2">
-                      <Database className="w-4 h-4 text-purple-400" />
-                      <h3 className="font-bold text-sm">Latest Sync Action</h3>
+                    <div className="flex items-center gap-2.5">
+                      <Database className="w-5 h-5 text-purple-400" />
+                      <h3 className="font-bold text-sm text-[#F5F5F7]">Latest Sync Action</h3>
                     </div>
                     {status?.last_sync_job ? (
-                      <span className={`text-[10px] px-2.5 py-1 rounded-full font-extrabold ${status.last_sync_job.status === 'COMPLETED' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>
+                      <span className={`text-[10px] px-2.5 py-1 rounded-full font-bold border ${status.last_sync_job.status === 'COMPLETED' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'}`}>
                         {status.last_sync_job.status}
                       </span>
                     ) : (
@@ -351,7 +359,7 @@ export default function App() {
                   </div>
 
                   {status?.last_sync_job ? (
-                    <div className="flex flex-col gap-3 text-sm text-gray-400">
+                    <div className="flex flex-col gap-3.5 text-sm text-gray-400">
                       <div className="flex justify-between border-b border-white/[0.02] pb-2">
                         <span>Job Reference</span>
                         <span className="text-white font-mono text-xs">#{status.last_sync_job.id}</span>
@@ -378,13 +386,13 @@ export default function App() {
               </div>
 
               {/* Solved List Preview */}
-              <div className="bg-white/[0.02] border border-white/[0.06] p-6 rounded-3xl flex flex-col gap-5 shadow-lg shadow-black/15">
+              <div className="bg-white/[0.02] border border-white/[0.06] p-6 rounded-3xl flex flex-col gap-5 shadow-xl">
                 <div className="flex items-center justify-between border-b border-white/[0.04] pb-2">
-                  <div className="flex items-center gap-2">
-                    <Layers className="w-4 h-4 text-blue-400" />
-                    <h3 className="font-bold text-sm">Recent Solved Submissions</h3>
+                  <div className="flex items-center gap-2.5">
+                    <Layers className="w-5 h-5 text-blue-400" />
+                    <h3 className="font-bold text-sm text-[#F5F5F7]">Recent Solved Submissions</h3>
                   </div>
-                  <button onClick={() => setActiveTab('submissions')} className="text-xs text-[#0071E3] hover:underline font-semibold">View All</button>
+                  <button onClick={() => setActiveTab('submissions')} className="text-xs text-[#0071E3] hover:underline font-bold">View All</button>
                 </div>
                 
                 <div className="overflow-x-auto">
@@ -438,7 +446,7 @@ export default function App() {
           )}
 
           {activeTab === 'submissions' && (
-            <div className="bg-white/[0.02] border border-white/[0.06] p-6 rounded-3xl flex flex-col gap-4 shadow-lg shadow-black/15">
+            <div className="bg-white/[0.02] border border-white/[0.06] p-6 rounded-3xl flex flex-col gap-4 shadow-xl">
               <div className="border-b border-white/[0.04] pb-4">
                 <h2 className="text-lg font-bold">Synchronized Solutions</h2>
                 <p className="text-xs text-gray-400">All problems successfully committed to your GitHub landing repository.</p>
@@ -498,7 +506,7 @@ export default function App() {
           )}
 
           {activeTab === 'logs' && (
-            <div className="bg-white/[0.02] border border-white/[0.06] p-6 rounded-3xl flex flex-col gap-4 shadow-lg shadow-black/15">
+            <div className="bg-white/[0.02] border border-white/[0.06] p-6 rounded-3xl flex flex-col gap-4 shadow-xl">
               <div className="border-b border-white/[0.04] pb-4">
                 <h2 className="text-lg font-bold">System Sync Logs</h2>
                 <p className="text-xs text-gray-400">Audit logs tracking automation executions and credentials verification history.</p>
@@ -540,7 +548,7 @@ export default function App() {
           )}
 
           {activeTab === 'settings' && (
-            <div className="bg-white/[0.02] border border-white/[0.06] p-6 rounded-3xl flex flex-col gap-4 shadow-lg shadow-black/15">
+            <div className="bg-white/[0.02] border border-white/[0.06] p-6 rounded-3xl flex flex-col gap-4 shadow-xl">
               <div className="border-b border-white/[0.04] pb-4">
                 <h2 className="text-lg font-bold">Engine Configuration Settings</h2>
                 <p className="text-xs text-gray-400">Configure LeetSync Pro scheduler intervals and target folders.</p>
@@ -555,7 +563,7 @@ export default function App() {
                     onChange={(e) => setGithubRepo(e.target.value)}
                     placeholder="e.g. owner/repo"
                     required
-                    className="px-4 py-3 bg-[#060608]/40 border border-white/[0.08] rounded-xl text-sm font-mono focus:border-[#0071E3] focus:outline-none text-white focus:ring-1 focus:ring-[#0071E3]/20"
+                    className="px-4 py-3 bg-[#07060F]/45 border border-white/[0.08] rounded-xl text-sm font-mono focus:border-[#0071E3] focus:outline-none text-white focus:ring-1 focus:ring-[#0071E3]/20"
                   />
                   <span className="text-[10px] text-gray-400">Format: owner/repository without spaces.</span>
                 </div>
@@ -568,7 +576,7 @@ export default function App() {
                     onChange={(e) => setSyncInterval(Number(e.target.value))}
                     min={1}
                     required
-                    className="px-4 py-3 bg-[#060608]/40 border border-white/[0.08] rounded-xl text-sm focus:border-[#0071E3] focus:outline-none text-white focus:ring-1 focus:ring-[#0071E3]/20"
+                    className="px-4 py-3 bg-[#07060F]/45 border border-white/[0.08] rounded-xl text-sm focus:border-[#0071E3] focus:outline-none text-white focus:ring-1 focus:ring-[#0071E3]/20"
                   />
                   <span className="text-[10px] text-gray-400">Minutes to wait between recurring background sync task calls.</span>
                 </div>
@@ -576,7 +584,7 @@ export default function App() {
                 <button
                   type="submit"
                   disabled={savingSettings}
-                  className="w-fit px-6 py-3 bg-gradient-to-r from-[#0071E3] to-[#0077ED] text-white font-semibold text-sm rounded-xl hover:brightness-110 active:scale-95 transition-all disabled:opacity-50"
+                  className="w-fit px-6 py-3 bg-gradient-to-r from-[#0071E3] to-[#0077ED] text-white font-semibold text-sm rounded-xl hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 shadow-lg shadow-blue-500/20"
                 >
                   {savingSettings ? 'Saving...' : 'Save Settings'}
                 </button>
@@ -588,7 +596,7 @@ export default function App() {
       </main>
 
       {/* Premium Footer */}
-      <footer className="mt-auto border-t border-white/[0.04] py-6 bg-[#060608]/40 text-center">
+      <footer className="mt-auto border-t border-white/[0.04] py-6 bg-[#07060F]/40 text-center relative z-10">
         <p className="text-xs text-gray-500 font-medium">
           &copy; 2026 LeetSync Pro. Engineered with premium clean architecture.
         </p>
