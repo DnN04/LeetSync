@@ -1,4 +1,4 @@
-# LeetSync Pro
+# LeetSync 
 
 An advanced automation platform that automatically synchronizes your accepted LeetCode submissions into your GitHub repository while delivering a premium, modern developer experience.
 
